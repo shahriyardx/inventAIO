@@ -16,19 +16,38 @@ model Store {
   capital Float
 }
 
-enum Action {
-  buy
-  sell
+model Products {
+  id       BigInt @unique @default(autoincrement())
+  sku      String @unique
+  name     String
+  brand    String
+  quantity BigInt
+  Buy      Buy[]
 }
 
-model Inventory {
-  id           BigInt   @unique @default(autoincrement())
-  shoe_name    String
-  sku          String
-  bought_price Float?
-  sold_price   Float?
-  size         String
-  quantity     Int
-  date         DateTime
-  action       Action
+model Buy {
+  id       BigInt   @unique @default(autoincrement())
+  price    Float
+  size     String
+  quantity Int
+  date     DateTime
+
+  source String?
+  note   String?
+
+  product    Products @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product_id BigInt
+  Sell       Sell[]
+}
+
+model Sell {
+  id     BigInt @unique @default(autoincrement())
+  buy    Buy    @relation(fields: [buy_id], references: [id], onDelete: Cascade)
+  buy_id BigInt
+
+  price    Float
+  quantity Int
+  date     DateTime
+
+  note String?
 }
