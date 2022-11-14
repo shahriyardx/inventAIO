@@ -4,6 +4,7 @@ from nextcord.interactions import Interaction
 
 from ..config import default_guild_ids
 from ..utils.models import InventAIOModel
+from ..utils.capital import update_capital
 
 
 class Management(commands.Cog):
@@ -24,7 +25,11 @@ class Management(commands.Cog):
         bought_id: int = SlashOption(name="year", description="Enter bought id"),
     ):
         await interaction.response.defer()
-        await self.bot.prisma.buy.delete(where={"id": bought_id})
+        data = await self.bot.prisma.buy.delete(where={"id": bought_id})
+        
+        total = data.quantity * data.price 
+        await update_capital(self.bot.prisma, total)
+        
         await self.send_message(
             i=interaction,
             message=f"Bought record has been deleted with ID: {bought_id}.",
@@ -37,7 +42,11 @@ class Management(commands.Cog):
         sold_id: int = SlashOption(name="year", description="Enter sold id"),
     ):
         await interaction.response.defer()
-        await self.bot.prisma.sell.delete(where={"id": sold_id})
+        data = await self.bot.prisma.sell.delete(where={"id": sold_id})
+
+        total = data.quantity * data.price 
+        await update_capital(self.bot.prisma, -total)
+
         await self.send_message(
             i=interaction, message=f"Sold record has been deleted with ID: {sold_id}."
         )
