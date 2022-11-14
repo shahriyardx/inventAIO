@@ -12,7 +12,7 @@ datasource db {
 }
 
 model Store {
-  id      BigInt @unique
+  id      BigInt @unique @default(autoincrement())
   capital Float
 }
 

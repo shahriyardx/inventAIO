@@ -7,6 +7,7 @@ from nextcord.interactions import Interaction
 from tabulate import tabulate
 
 from ..config import default_guild_ids
+from ..utils.capital import update_capital
 from ..utils.models import InventAIOModel
 from ..utils.tables import get_table_embed
 
@@ -58,7 +59,7 @@ class Sell(commands.Cog):
                 f"You only have `{bought.product.quantity}` left on the stock. Can't sell more than you have.",
             )
 
-        _bought = await self.bot.prisma.sell.create(
+        _sold = await self.bot.prisma.sell.create(
             data={
                 "buy_id": bought.id,
                 "price": sold_price,
@@ -72,11 +73,13 @@ class Sell(commands.Cog):
             data={"quantity": bought.product.quantity - quantity},
             where={"sku": bought.product.sku},
         )
+        total = _sold.quantity * _sold.price
+        await update_capital(self.bot.prisma, total)
 
         embed = get_table_embed(
             self.bot,
             "sell",
-            _bought.id,
+            _sold.id,
             date,
             bought.product.name,
             bought.product.sku,

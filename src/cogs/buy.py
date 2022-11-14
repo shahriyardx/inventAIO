@@ -1,12 +1,12 @@
 import datetime
 
 from nextcord.application_command import SlashOption, slash_command
-from nextcord.embeds import Embed
 from nextcord.ext import commands
 from nextcord.interactions import Interaction
 from tabulate import tabulate
 
 from ..config import default_guild_ids
+from ..utils.capital import get_capital, update_capital
 from ..utils.models import InventAIOModel
 from ..utils.tables import get_table_embed
 
@@ -88,6 +88,14 @@ class Buy(commands.Cog):
         await self.bot.prisma.products.update(
             data={"quantity": product.quantity + _quantity}, where={"sku": _sku}
         )
+
+        capital = await get_capital(self.bot.prisma)
+        total = _bought.quantity * _bought.price
+
+        if total > capital.capital:
+            total = -capital.capital
+
+        await update_capital(self.bot.prisma, -total)
 
         embed = get_table_embed(
             self.bot,
