@@ -22,7 +22,7 @@ class Management(commands.Cog):
     async def bought(
         self,
         interaction: Interaction,
-        bought_id: int = SlashOption(name="year", description="Enter bought id"),
+        bought_id: int = SlashOption(description="Enter bought id"),
     ):
         await interaction.response.defer()
         data = await self.bot.prisma.buy.delete(where={"id": bought_id})
@@ -39,7 +39,7 @@ class Management(commands.Cog):
     async def sold(
         self,
         interaction: Interaction,
-        sold_id: int = SlashOption(name="year", description="Enter sold id"),
+        sold_id: int = SlashOption(description="Enter sold id"),
     ):
         await interaction.response.defer()
         data = await self.bot.prisma.sell.delete(where={"id": sold_id})

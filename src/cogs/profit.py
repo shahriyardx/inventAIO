@@ -246,7 +246,7 @@ class Profit(commands.Cog):
                 "December": 12,
             },
         ),
-        year: int = SlashOption(name="year", description="Enter the year"),
+        year: int = SlashOption(description="Enter the year"),
     ):
         await interaction.response.defer()
 
@@ -270,12 +270,12 @@ class Profit(commands.Cog):
             file=File(fp=report["file"], filename=f"{self.get_rand_name()}.pdf")
         )
 
-    @profit.subcommand(name="year", description="Show profit of a year")
+    @profit.subcommand(description="Show profit of a year")
     async def year(
         self,
         interaction: Interaction,
         year: int = SlashOption(
-            name="year", description="Enter the year", min_value=2000, max_value=3000
+             description="Enter the year", min_value=2000, max_value=3000
         ),
     ):
         await interaction.response.defer()
