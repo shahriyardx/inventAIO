@@ -24,7 +24,9 @@ class Buy(commands.Cog):
         interaction: Interaction,
         sku: str = SlashOption(description="Enter the SKU of shoe"),
         size: str = SlashOption(description="Enter size of the shoe"),
-        price: float = SlashOption(description="Enter the price of buying", min_value=0.01),
+        price: float = SlashOption(
+            description="Enter the price of buying", min_value=0.01
+        ),
         quantity: int = SlashOption(description="Enter the buying amount", min_value=1),
         date: str = SlashOption(description="Enter the date of buying"),
         source: str = SlashOption(description="Source of buying", default=""),
