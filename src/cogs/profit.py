@@ -13,8 +13,9 @@ from nextcord.file import File
 from nextcord.interactions import Interaction
 
 from ..config import currency, default_guild_ids
-from ..tamplates.profit import template as demo
+from ..tamplates.profit import template as table_template
 from ..utils.models import InventAIOModel
+from ..utils.capital import get_capital
 
 max_dates = {
     1: ["January", 31],
@@ -184,6 +185,7 @@ class Profit(commands.Cog):
         )
 
         profit = sold_price - bought_price
+        capital = await get_capital(self.bot.prisma)
         analytics = self.get_summary(
             rows=[
                 ["Total Sold", f"{sold_price} {currency}"],
@@ -192,11 +194,12 @@ class Profit(commands.Cog):
                     "Profit",
                     f"<span style='color: {'red' if profit < 0 else 'green'}'> {sold_price - bought_price} {currency}</span>",
                 ],
+                ["Capital", f"{capital.capital} {currency}"],
             ]
         )
         final_html = self.get_final_html(
             tables=[bought_table, sold_table],
-            template=demo,
+            template=table_template,
             extra_html=analytics,
             prefix_html=f"<h1 style='text-align: center;'>{pdf_title}</h1>",
         )
