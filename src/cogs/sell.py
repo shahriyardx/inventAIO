@@ -36,7 +36,7 @@ class Sell(commands.Cog):
             day, month, year = [int(day), int(month), int(year)]
             if len(str(year)) == 2:
                 year = 2000 + year
-            
+
             _date = datetime.datetime(year, month, day, 0, 0, 0, 0)
         except Exception as e:
             print(e)

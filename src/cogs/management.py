@@ -25,11 +25,18 @@ class Management(commands.Cog):
         bought_id: int = SlashOption(description="Enter bought id"),
     ):
         await interaction.response.defer()
+        bought = await self.bot.prisma.buy.find_unique(
+            where={"id": bought_id}, include={"product": True}
+        )
         data = await self.bot.prisma.buy.delete(where={"id": bought_id})
-        
-        total = data.quantity * data.price 
+
+        total = data.quantity * data.price
         await update_capital(self.bot.prisma, total)
-        
+        await self.bot.prisma.products.update(
+            where={"id": bought.product_id},
+            data={"quantity": bought.product.quantity - bought.quantity},
+        )
+
         await self.send_message(
             i=interaction,
             message=f"Bought record has been deleted with ID: {bought_id}.",
@@ -42,10 +49,17 @@ class Management(commands.Cog):
         sold_id: int = SlashOption(description="Enter sold id"),
     ):
         await interaction.response.defer()
+        sold = await self.bot.prisma.sell.find_unique(
+            where={"id": sold_id}, include={"buy": {"include": {"product": True}}}
+        )
         data = await self.bot.prisma.sell.delete(where={"id": sold_id})
 
-        total = data.quantity * data.price 
+        total = data.quantity * data.price
         await update_capital(self.bot.prisma, -total)
+        await self.bot.prisma.products.update(
+            where={"id": sold.buy.product_id},
+            data={"quantity": sold.buy.product.quantity + sold.quantity},
+        )
 
         await self.send_message(
             i=interaction, message=f"Sold record has been deleted with ID: {sold_id}."

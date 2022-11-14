@@ -275,7 +275,7 @@ class Profit(commands.Cog):
         self,
         interaction: Interaction,
         year: int = SlashOption(
-             description="Enter the year", min_value=2000, max_value=3000
+            description="Enter the year", min_value=2000, max_value=3000
         ),
     ):
         await interaction.response.defer()
