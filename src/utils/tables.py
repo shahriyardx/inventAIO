@@ -29,6 +29,7 @@ def get_table_embed(
 
     if sell_price:
         data.append(["Sold Price", sell_price])
+        data.append(["Profit", sell_price * quantity - buy_price])
 
     data += additional_fields
 

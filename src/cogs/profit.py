@@ -208,9 +208,9 @@ class Profit(commands.Cog):
         pdf_bytes = self.get_pdf_to_bytes(final_pdf)
 
         embed = Embed(title=embed_title, description="")
-        embed.description += f"**Total sold:** {sold} - ${sold_price}\n"
-        embed.description += f"**Total bought:** {bought} - ${bought_price}\n"
-        embed.description += f"**Profit:** {sold_price - bought_price}"
+        embed.description += f"**Total sold:** {sold} - {sold_price} {currency}\n"
+        embed.description += f"**Total bought:** {bought} - {bought_price} {currency}\n"
+        embed.description += f"**Profit:** {sold_price - bought_price} {currency}"
 
         embed.set_thumbnail(url=self.bot.logo)
 
