@@ -64,6 +64,20 @@ class Management(commands.Cog):
         await self.send_message(
             i=interaction, message=f"Sold record has been deleted with ID: {sold_id}."
         )
+    
+    @delete.subcommand(description="Delete a outgoing entry from database")
+    async def outgoing(
+        self,
+        interaction: Interaction,
+        outgoing_id: int = SlashOption(description="Enter sold id"),
+    ):
+        await interaction.response.defer()
+        data = await self.bot.prisma.outgoings.delete(where={"id": outgoing_id})
+        await update_capital(self.bot.prisma, data.amount)
+
+        await self.send_message(
+            i=interaction, message=f"Outgoing record has been deleted with ID: {outgoing_id}."
+        )
 
 
 def setup(bot: InventAIOModel):

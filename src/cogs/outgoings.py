@@ -126,7 +126,7 @@ class Outgoing(commands.Cog):
                 f"Unable to convert `{date}` to a date. Please enter date in day-month-year format",
             )
 
-        await self.bot.prisma.outgoings.create(
+        data = await self.bot.prisma.outgoings.create(
             data={"where": where, "amount": amount, "date": _date}
         )
 
@@ -134,6 +134,7 @@ class Outgoing(commands.Cog):
         await self.send_message(
             interaction,
             message=f"Added outgoing to the database.\n"
+            f"**ID** : {data.id}\n"
             f"**Amount** : {amount}{currency}\n"
             f"**Where** : {where}",
         )
