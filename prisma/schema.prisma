@@ -51,3 +51,10 @@ model Sell {
 
   note String?
 }
+
+model Outgoings {
+  id     BigInt   @unique @default(autoincrement())
+  amount Float
+  where  String
+  date   DateTime
+}

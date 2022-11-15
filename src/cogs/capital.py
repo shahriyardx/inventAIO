@@ -11,8 +11,8 @@ class Capital(commands.Cog):
     def __init__(self, bot: InventAIOModel):
         self.bot = bot
 
-    async def send_message(self, i: Interaction, message: str):
-        await i.edit_original_message(content=message, embed=None)
+    async def send_message(self, i: Interaction, message: str, embed=None):
+        await i.edit_original_message(content=message, embed=embed)
 
     @slash_command(guild_ids=default_guild_ids, description="See your capital")
     async def capital(self, i: Interaction):
@@ -66,6 +66,25 @@ class Capital(commands.Cog):
 
         await interaction.followup.send(
             content=f"Capital is now: **{new_cap.capital} {currency}**"
+        )
+
+    @slash_command(description="Add your outgoings")
+    async def outgoings(
+        self,
+        interaction: Interaction,
+        amount: float = SlashOption(description="Enter outgoing amount"),
+        where: str = SlashOption(description="Where it gone?"),
+    ):
+
+        await interaction.response.defer()
+        await self.bot.prisma.outgoings.create(data={"where": where, "amount": amount})
+
+        await update_capital(self.bot.prisma, -amount)
+        await self.send_message(
+            interaction,
+            message=f"Added outgoing to the database.\n"
+            f"**Amount** : {amount}{currency}\n"
+            f"**Where** : {where}",
         )
 
 

@@ -3,8 +3,8 @@ from nextcord.ext import commands
 from nextcord.interactions import Interaction
 
 from ..config import default_guild_ids
-from ..utils.models import InventAIOModel
 from ..utils.capital import update_capital
+from ..utils.models import InventAIOModel
 
 
 class Management(commands.Cog):
