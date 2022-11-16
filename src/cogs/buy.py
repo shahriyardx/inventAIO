@@ -1,14 +1,40 @@
 import datetime
+from typing import List
 
+from nextcord import ButtonStyle, Embed
 from nextcord.application_command import SlashOption, slash_command
-from nextcord.ext import commands
+from nextcord.ext import commands, menus
 from nextcord.interactions import Interaction
+from prisma.models import Buy
 from tabulate import tabulate
 
 from ..config import default_guild_ids
 from ..utils.capital import get_capital, update_capital
 from ..utils.models import InventAIOModel
 from ..utils.tables import get_table_embed
+
+
+class MySource(menus.ListPageSource):
+    def __init__(self, boughts: List[Buy]):
+        super().__init__(boughts, per_page=2)
+
+    async def format_page(self, menu, entries: List[Buy]):
+        offset = menu.current_page * self.per_page
+
+        data = [["SL", "ID", "SKU", "Name"]]
+
+        for index, bought in enumerate(entries, start=offset):
+            data.append([index + 1, bought.id, bought.product.sku, bought.product.name])
+
+        table = tabulate(
+            data,
+            tablefmt="fancy_grid",
+        )
+        embed = Embed(title="All Bought")
+        embed.description = f"```{table.__str__()}```"
+
+        embed.set_footer(text=f"Page {menu.current_page + 1}/{self._max_pages}")
+        return embed
 
 
 class Buy(commands.Cog):
@@ -113,6 +139,20 @@ class Buy(commands.Cog):
             additional_fields=[["Current Stock", product.quantity + _quantity]],
         )
         await interaction.edit_original_message(content=None, embed=embed)
+
+    @slash_command(description="See all bought")
+    async def bought_list(self, interaction: Interaction):
+        boughts = await self.bot.prisma.buy.find_many(
+            order={"date": "desc"}, include={"product": True}
+        )
+
+        pages = menus.ButtonMenuPages(
+            source=MySource(boughts=boughts),
+            clear_buttons_after=True,
+            style=ButtonStyle.primary,
+        )
+
+        await pages.start(interaction=interaction)
 
 
 def setup(bot: InventAIOModel):

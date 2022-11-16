@@ -1,9 +1,39 @@
+from math import ceil
+from typing import List
+
+from nextcord import ButtonStyle, Embed
 from nextcord.application_command import SlashOption, slash_command
-from nextcord.ext import commands
+from nextcord.ext import commands, menus
 from nextcord.interactions import Interaction
+from prisma.models import Products
+from tabulate import tabulate
 
 from ..config import default_guild_ids
 from ..utils.models import InventAIOModel
+
+
+class MySource(menus.ListPageSource):
+    def __init__(self, products: List[Products]):
+        super().__init__(products, per_page=2)
+
+    async def format_page(self, menu, entries: List[Products]):
+        offset = menu.current_page * self.per_page
+        print(self._max_pages)
+
+        data = [["ID", "SKU", "Name"]]
+
+        for index, product in enumerate(entries, start=offset):
+            data.append([index + 1, product.sku, product.name])
+
+        table = tabulate(
+            data,
+            tablefmt="fancy_grid",
+        )
+        embed = Embed(title="All Products")
+        embed.description = f"```{table.__str__()}```"
+
+        embed.set_footer(text=f"Page {menu.current_page + 1}/{self._max_pages}")
+        return embed
 
 
 class Product(commands.Cog):
@@ -60,6 +90,18 @@ class Product(commands.Cog):
         await self.send_message(
             i, f"Product with SKU: `{sku.strip()}` has been deleted from the db."
         )
+
+    @product.subcommand(description="See all the sku's")
+    async def all(self, interaction: Interaction):
+        products = await self.bot.prisma.products.find_many()
+
+        pages = menus.ButtonMenuPages(
+            source=MySource(products=products),
+            clear_buttons_after=True,
+            style=ButtonStyle.primary,
+        )
+
+        await pages.start(interaction=interaction)
 
 
 def setup(bot: InventAIOModel):

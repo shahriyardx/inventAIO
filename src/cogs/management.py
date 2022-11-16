@@ -64,7 +64,7 @@ class Management(commands.Cog):
         await self.send_message(
             i=interaction, message=f"Sold record has been deleted with ID: {sold_id}."
         )
-    
+
     @delete.subcommand(description="Delete a outgoing entry from database")
     async def outgoing(
         self,
@@ -76,7 +76,8 @@ class Management(commands.Cog):
         await update_capital(self.bot.prisma, data.amount)
 
         await self.send_message(
-            i=interaction, message=f"Outgoing record has been deleted with ID: {outgoing_id}."
+            i=interaction,
+            message=f"Outgoing record has been deleted with ID: {outgoing_id}.",
         )
 
 

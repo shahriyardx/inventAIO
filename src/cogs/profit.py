@@ -1,6 +1,4 @@
 import datetime
-import random
-import string
 
 from nextcord.application_command import SlashOption, slash_command
 from nextcord.embeds import Embed
