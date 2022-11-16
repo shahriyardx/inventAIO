@@ -91,7 +91,7 @@ class Product(commands.Cog):
             i, f"Product with SKU: `{sku.strip()}` has been deleted from the db."
         )
 
-    @product.subcommand(description="See all the sku's", guild_ids=default_guild_ids)
+    @product.subcommand(description="See all the sku's")
     async def all(self, interaction: Interaction):
         products = await self.bot.prisma.products.find_many()
 
