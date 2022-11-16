@@ -14,7 +14,7 @@ from ..utils.models import InventAIOModel
 
 class MySource(menus.ListPageSource):
     def __init__(self, products: List[Products]):
-        super().__init__(products, per_page=2)
+        super().__init__(products, per_page=10)
 
     async def format_page(self, menu, entries: List[Products]):
         offset = menu.current_page * self.per_page
