@@ -93,6 +93,7 @@ class Product(commands.Cog):
 
     @product.subcommand(description="See all the sku's")
     async def all(self, interaction: Interaction):
+        await interaction.channel.purge(limit=10)
         products = await self.bot.prisma.products.find_many()
 
         pages = menus.ButtonMenuPages(

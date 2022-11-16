@@ -142,6 +142,7 @@ class Buy(commands.Cog):
 
     @slash_command(description="See all bought", guild_ids=default_guild_ids)
     async def bought_list(self, interaction: Interaction):
+        await interaction.channel.purge(limit=10)
         boughts = await self.bot.prisma.buy.find_many(
             order={"date": "desc"}, include={"product": True}
         )
