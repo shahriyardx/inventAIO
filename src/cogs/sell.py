@@ -122,7 +122,7 @@ class Sell(commands.Cog):
         )
         await interaction.edit_original_message(content=None, embed=embed)
 
-    @slash_command(description="See all sold")
+    @slash_command(description="See all sold", guild_ids=default_guild_ids)
     async def sold_list(self, interaction: Interaction):
         solds = await self.bot.prisma.sell.find_many(
             order={"date": "desc"}, include={"buy": {"include": {"product": True}}}
