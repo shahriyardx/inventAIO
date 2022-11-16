@@ -33,8 +33,8 @@ class InventAIO(commands.AutoShardedBot):
 
 
 intents = Intents.default()
-intents.message_content = True
-intents.members = True
+# intents.message_content = True
+# intents.members = True
 
 bot: InventAIOModel = InventAIO(
     command_prefix=prefix,
